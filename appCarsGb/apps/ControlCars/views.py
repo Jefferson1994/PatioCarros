@@ -11,7 +11,7 @@ from apps.ControlCars.models import Alquiler
 from apps.ControlCars.forms import CarroForm 
 from apps.ControlCars.forms import PersonaForm
 from apps.ControlCars.forms import AlquilerForm
-from apps.ControlCars.forms import VenderForm
+from apps.ControlCars.forms import VenderForm, VenderEditForm
 from django.shortcuts import render
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
@@ -26,12 +26,12 @@ from reportlab.platypus import TableStyle
 from reportlab.lib import colors
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+# class In(TemplateView):
+#     template_name = "base/index.html"
 
-class In(TemplateView):
-    template_name = "base/index.html"
-
-
+@login_required
 def index(request):
     return render(request,'base/index.html')
 
@@ -84,7 +84,7 @@ class PersonaDelete(DeleteView):
 
 
 
-
+@login_required
 def AlquilerCrear(request):
 	form_class=AlquilerForm()
 
@@ -106,6 +106,7 @@ def AlquilerCrear(request):
 	context={'carros':Carross,'form':form_class}
 	return render(request, 'alquiler/fAlquiler.html',context)
 
+@login_required
 def DevolverAlquiler(request,pk):
 	detalles=Alquiler.objects.get(id=pk)
 	detalles.terminado=False
@@ -118,7 +119,7 @@ def DevolverAlquiler(request,pk):
 	
 
 
-
+@login_required
 def AlquilerListar(request):
     ingresos = Alquiler.objects.all()
     ingreso_form =  AlquilerForm
@@ -128,6 +129,7 @@ def AlquilerListar(request):
     }
     return render (request, 'alquiler/Listaalquiler.html', context)
 
+@login_required
 def get_alquiler_id(request, pk):
     ''' Funcion para obtener id del egreso'''
     egreso = Alquiler.objects.filter(id=pk)
@@ -141,7 +143,7 @@ class AlquilerUpdate(UpdateView):
 	success_url= reverse_lazy('cars:alquilerlista')
 
 
-
+@login_required
 def AlquilerDelete(request,pk):
 	detalles=Alquiler.objects.get(id=pk)
 	
@@ -155,6 +157,7 @@ class Pff(DeleteView):
 	model=Alquiler
 	template_name="factura/FacAlqui.html"
 
+@login_required
 def some_view(request):
 	model=Alquiler
 	buffer = io.BytesIO()
@@ -167,7 +170,7 @@ def some_view(request):
 
 
 
-
+@login_required
 def VenderCrear(request):
 	form_class=VenderForm()
 
@@ -198,16 +201,40 @@ class simulador(TemplateView):
 	
 
 
-
+@login_required
 def VenderListar(request):
     ingresos = VentaCars.objects.all()
-    ingreso_form =  VenderForm
+    ingreso_form =  VenderEditForm
     context = {
         'ventas': ingresos,
         'form': ingreso_form
     }
     return render (request, 'Vender/listarVenta.html', context)
 
+@login_required
+def guardar_editado(request):
+# funcion para guar lo editado de la venta
+	pk_venta = request.POST.get('id_Venta')
+	pk_car_ant = request.POST.get('pk_car_ant')
+	carro_ant = Carros.objects.get(id=pk_car_ant)
+	placa_ant = carro_ant.placa
+	print(placa_ant)
+	venta = VentaCars.objects.get(id=pk_venta)
+	egreso_form = VenderEditForm(instance = venta)
+	if request.method == 'POST':
+		egreso_form = VenderEditForm(request.POST, instance=venta)
+		if egreso_form.is_valid():
+			venta = egreso_form.save(commit=False)
+			venta.save()
+			venta_aux = VentaCars.objects.last()
+			carro = venta_aux.idcar
+			carro_nuevo = Carros.objects.get(placa=carro)
+			if placa_ant != carro:
+				carro_ant.EstadoVenta = False
+				carro_ant.save()
+				carro_nuevo.EstadoVenta = True
+				carro_nuevo.save()
+	return redirect('cars:listaventa')
 
 class VenderUpdate(UpdateView):
 	model=VentaCars
@@ -220,6 +247,7 @@ class VenderDelete(DeleteView):
 	template_name="Vender/borrarvender.html"
 	success_url= reverse_lazy('cars:listaventa')
 
+@login_required
 def get_venta_id(request, pk):
     ''' Funcion para obtener id del egreso'''
     egreso = VentaCars.objects.filter(id=pk)

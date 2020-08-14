@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.conf.urls import url
-from apps.ControlCars.views import CarroCrear,CarroListar,In,CarroUpdate,CarroDelete,PersonaCrear,PersonaListar,PersonaDelete,PersonaUpdate,AlquilerCrear,AlquilerListar,AlquilerUpdate,AlquilerDelete,Pff,some_view,ReportePersonasPDF,VenderCrear,VenderListar, VenderDelete,VenderUpdate,VentasPersonasPDF,simulador,DevolverAlquiler
+from apps.ControlCars.views import CarroCrear,CarroListar,CarroUpdate,CarroDelete,PersonaCrear,PersonaListar,PersonaDelete,PersonaUpdate,AlquilerCrear,AlquilerListar,AlquilerUpdate,AlquilerDelete,Pff,some_view,ReportePersonasPDF,VenderCrear,VenderListar, VenderDelete,VenderUpdate,VentasPersonasPDF,simulador,DevolverAlquiler
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
@@ -9,8 +9,8 @@ from . import views
 
 app_name = 'main_app'
 urlpatterns = [
-    url   (r'^index', In.as_view(),name='index'),
-   
+    # url   (r'^index', In.as_view(),name='index'),
+   path('index', views.index, name='index'),
    
 
     path('',auth_views.LoginView.as_view(template_name='base/login.html'), name='login'),
@@ -33,6 +33,7 @@ urlpatterns = [
 
 
     url(r'^listaalq/$',views.AlquilerListar, name='alquilerlista'),
+    url(r'^guardar_editado/$',views.guardar_editado, name='guardar_editado'),
     path('get_alquiler_id/<int:pk>', views.get_alquiler_id, name = 'get_alquiler_id'),
 
      url(r'^eliminaralq/(?P<pk>\d+)/$',views.AlquilerDelete, name='eliminaralq'),

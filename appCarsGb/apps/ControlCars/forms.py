@@ -213,3 +213,48 @@ class VenderForm(forms.ModelForm):
 		  'descripcionA':forms.Textarea(attrs={'class':'form-control' , 'maxlength':'6000'}),
 		  
 		}
+
+class VenderEditForm(forms.ModelForm):
+	class Meta:
+		model=VentaCars
+		fields=[
+			'idcar',
+			'idcliente',
+			'MatriculadoPor',
+			'PrecioVenta',
+			'TipodeVenta',
+			'Fecha_Documentacion',
+			'CiudadVenta',
+			'Fecha_Venta',
+			'descripcionA',]
+		labels={
+		  'idcar':'Placa',
+		  'idcliente':'Nombre Cliente',
+		  'MatriculadoPor':'Matriculado Por',
+		  'PrecioVenta':'Precio de Venta',
+		  'TipodeVenta':'Tipo de Venta?',
+		  'Fecha_Documentacion':'Fecha de Documentacion acordado con el Cliente',
+		  'CiudadVenta':'Ciudad de Venta',
+		  'Fecha_Venta':'Fecha de Venta',
+		  'descripcionA':'Descripción de la venta del vehiculo',
+
+		}
+		TipoVenta= [
+		    ('Efectivo', 'Efectivo'),
+			('Financiado', 'Financiado'),
+			('Abono', 'Abono'),
+			('Saldo', 'Saldo'),
+		]
+
+		widgets={
+		  'idcliente':forms.Select(attrs={'class':'form-control'}),
+		  'MatriculadoPor':forms.TextInput(attrs={'class':'form-control'}),
+		  'PrecioVenta':forms.TextInput(attrs={'class':'form-control'}),
+		  'TipodeVenta':forms.Select(choices=TipoVenta,attrs={'class':'form-control'}),
+		  'Fecha_Documentacion':forms.TextInput(attrs={'type':'date','class':'selectpicker'}),
+		  'CiudadVenta':forms.TextInput(attrs={'class':'form-control'}),
+		  'Fecha_Venta':forms.TextInput(attrs={'type':'date','class':'selectpicker'}),
+		  
+		  'descripcionA':forms.Textarea(attrs={'class':'form-control' , 'maxlength':'6000'}),
+		  
+		}

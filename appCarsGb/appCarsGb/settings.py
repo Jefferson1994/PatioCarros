@@ -78,9 +78,11 @@ WSGI_APPLICATION = 'appCarsGb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE' : 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'CarsGb6',
+        # 'NAME': 'CarsGb6',
+        'NAME': 'patio',
         'USER': 'postgres',
-        'PASSWORD':'root',
+        # 'PASSWORD':'root',
+        'PASSWORD':'admin123',
         'HOST':'localhost',
         'PORT':5432,
     }
